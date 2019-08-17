@@ -9,6 +9,7 @@ open Fable.React.Props
 open Fulma
 open Thoth.Json
 open Fable.Core.JsInterop
+open Browser
 
 open Shared
 open ModelMsgs
@@ -71,7 +72,16 @@ let safeComponents =
           components ]
 
 let navBrand =
-    Navbar.Brand.div [ Props [ Style [ BackgroundColor "#4db8ff" ] ] ]
+    Navbar.Brand.div [ Props [ Style [ BackgroundColor "rgba(51, 153, 255, 0.4)" ]
+                               Id "safeLogo"
+                               OnMouseOver (fun _ -> let safeLogo = document.getElementById "safeLogo"
+                                                     safeLogo?style?backgroundColor <- "rgba(153, 204, 255, 0.3)"
+                                            )
+                               OnMouseLeave (fun _ -> let safeLogo = document.getElementById "safeLogo"
+                                                      safeLogo?style?backgroundColor <- "rgba(51, 153, 255, 0.4)"
+                                            )
+                                ]
+                     ]
         [ Navbar.Item.a
             [ Navbar.Item.Props [ Href "https://safe-stack.github.io/" ]
               Navbar.Item.IsActive true ]
@@ -104,4 +114,8 @@ let mainPinInModule dispatch =
     Column.column
         [ Column.Width (Screen.All, Column.Is6)
           Column.Offset (Screen.All, Column.Is3) ]
-        [ containerBox dispatch ]
+        [ Container.container
+            [ ]
+            [ strong [ Style [ Color "#d9d9d9" ] ] [str "Der zugewiesene Pin stellt sicher, dass pro Pin nur einmal abgestimmt wird. Es wird für jede Aufgabe und jeden Pin immer die letzte Abstimmung ausgewertet. Die Umfrage verläuft absolut anonym!" ] ]
+          br []
+          containerBox dispatch ]

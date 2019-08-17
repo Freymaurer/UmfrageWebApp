@@ -53,7 +53,8 @@ let question questionTxt qoi (model:Model) dispatch =
         [ Level.item [ Level.Item.HasTextCentered
                        Level.Item.Modifiers [ Modifier.TextColor IsWhiteTer ]
                        Level.Item.Props [ Style [ BorderBottom "1px solid lightblue"
-                                                  PaddingBottom "15px"] ] ]
+                                                  PaddingBottom "15px"
+                                                  Width "100%"] ] ]
             [ div [ ]
                 [ Level.heading [ Modifiers [ Modifier.TextSize (Screen.All,TextSize.Is5) ]
                                   Props [ Style [ TextTransform "none"

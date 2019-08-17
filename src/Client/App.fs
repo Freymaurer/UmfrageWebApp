@@ -38,6 +38,7 @@ let init () : Model * Cmd<Msg> =
         RatingCollector = Some {Question1 = 0; Question2 = 0; Question3 = 0; Question4 = 0}
         Task = None
         AdditionalText = ""
+        Debug = ""
         }
     initialModel, Cmd.none
 
@@ -46,6 +47,27 @@ let init () : Model * Cmd<Msg> =
 // these commands in turn, can dispatch messages to which the update function will react.
 let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     match currentModel, msg with
+
+    | _, GetServertimeRequest (rating,addTxt,task,pin) ->
+        let requestCmd =
+            Cmd.OfAsync.either
+                Server.apiSurvey.GetServertime
+                (rating,addTxt,task,pin)
+                (Ok >> GetServertimeResponse)
+                (Error >> GetServertimeResponse)
+        currentModel,requestCmd
+    | _, GetServertimeResponse (Ok value) ->
+        let nextModel = {
+            currentModel with
+                Debug = string value
+        }
+        nextModel,Cmd.none
+    | _,GetServertimeResponse (Error e) ->
+        let nextModel = {
+            currentModel with
+                Debug = e.Message
+        }
+        nextModel,Cmd.none
 
     | _, WriteSurveyResultsRequest (rating,addTxt,task,pin) ->
         let requestCmd =
@@ -56,9 +78,17 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
                 (Error >> WriteSurveyResultsResponse)
         currentModel,requestCmd
     | _, WriteSurveyResultsResponse (Ok value) ->
-        currentModel,Cmd.none
+        let nextModel = {
+            currentModel with
+                Debug = string value
+        }
+        nextModel,Cmd.none
     | _,WriteSurveyResultsResponse (Error e) ->
-        currentModel,Cmd.none
+        let nextModel = {
+            currentModel with
+                Debug = e.Message
+        }
+        nextModel,Cmd.none
 
     | _, UpdatePin (input) ->
         let nextModel = {
@@ -116,7 +146,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
                                      Position PositionOptions.Relative ]
                            ]
                 ]
-        [ Hero.head [ ]
+        [ Hero.head [ Props [ Style [ Background "rgba(51, 153, 255, 0.15)"] ] ]
             [ Navbar.navbar [ ]
                 [ Container.container [ ]
                     [ navBrand
@@ -125,7 +155,8 @@ let view (model : Model) (dispatch : Msg -> unit) =
               br []
               br []
               Heading.h1 [ Heading.Props [ Style [Color "#d9d9d9"] ]
-                           Heading.Modifiers [ Modifier.TextAlignment (Screen.All,TextAlignment.Centered) ] ] [ str "Umfrage" ]
+                           Heading.Modifiers [ Modifier.TextAlignment (Screen.All,TextAlignment.Centered)
+                                               Modifier.TextSize (Screen.All,TextSize.Is1) ] ] [ strong [] [ str "Umfrage" ] ]
               Heading.h4 [ Heading.Props [ Style [Color "#d9d9d9"] ]
                            Heading.IsSubtitle
                            Heading.Modifiers [ Modifier.TextAlignment (Screen.All,TextAlignment.Centered) ]
@@ -144,7 +175,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
                     ]
             ]
           Hero.foot
-            [ ]
+            [ Props [ Style [ Background "rgba(51, 153, 255, 0.15)"] ] ]
             [ Text.p
                 [ Modifiers [ Modifier.TextColor IsGreyLighter;
                               Modifier.TextAlignment (Screen.All,TextAlignment.Centered) ] ]
@@ -152,6 +183,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
             ]
           //static page elements
           model.Modal
+          str model.Debug
         ]
 
 #if DEBUG

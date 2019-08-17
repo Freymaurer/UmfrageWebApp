@@ -23,14 +23,12 @@ type Model = {
     RatingCollector : Ratings option
     Task : Tasks option
     AdditionalText : string
+    Debug : string
     }
 
 // The Msg type defines what events/actions can occur while the application is running
 // the state of the application changes *only* in reaction to these events
 type Msg =
-    | Increment
-    | Decrement
-    | InitialCountLoaded of Counter
     | UpdatePin of string
     | CheckPin of (Msg -> unit)
     | CloseModal
@@ -40,4 +38,6 @@ type Msg =
     | UpdateTask of Tasks
     | WriteSurveyResultsRequest of (Ratings*string*Tasks*string)
     | WriteSurveyResultsResponse of Result<unit,exn>
+    | GetServertimeRequest of (Ratings*string*Tasks*string)
+    | GetServertimeResponse of Result<string,exn>
 
