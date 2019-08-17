@@ -83,6 +83,17 @@ let ratings model dispatch=
           question "Wurden Euch genügen Ressourcen genannt um die Aufgaben lösen zu können?" 3 model dispatch
           question "Waren die Themen und Anwendungsmöglichkeiten gut erklärt?" 4 model dispatch ]
 
+let checkForward (model:Model) =
+    let ranged1To5 num = if num < 1 || num > 5 then false else true
+    if model.Task.IsSome && model.RatingCollector.IsSome
+        then if ranged1To5 model.RatingCollector.Value.Question1 &&
+                ranged1To5 model.RatingCollector.Value.Question2 &&
+                ranged1To5 model.RatingCollector.Value.Question3 &&
+                ranged1To5 model.RatingCollector.Value.Question4
+             then true
+             else false
+        else false
+
 let mainRatingModule (model:Model) (dispatch : Msg -> unit) =
     let currentTask =
         if model.Task.IsSome
@@ -146,7 +157,8 @@ let mainRatingModule (model:Model) (dispatch : Msg -> unit) =
               [ Column.column
                   []
                   [ Button.a
-                      [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex 3)) ]
+                      [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex 3))
+                        (if checkForward model then Button.IsStatic false else Button.IsStatic true)]
                       [ str "Weiter"]
                   ]
               ]

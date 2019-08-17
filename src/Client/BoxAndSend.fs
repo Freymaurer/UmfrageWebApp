@@ -49,9 +49,6 @@ let mainBoxAndSendModule (model:Model) (dispatch : Msg -> unit) =
                    ]
                 ]
             ]
-          //Heading.h4
-          //  [ Heading.Modifiers [ Modifier.TextColor IsWhiteTer ] ]
-          //  [ str "Ihr wollt uns Vorschläge machen oder einfach nur Frust rauslassen, schreibt es uns!" ]
           br []
           br []
           br []
@@ -67,7 +64,8 @@ let mainBoxAndSendModule (model:Model) (dispatch : Msg -> unit) =
               Column.column
                 [ Column.Width (Screen.All,Column.IsOneQuarter) ]
                 [ Button.a
-                    [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex 2)) ]
+                    [ Button.OnClick (fun _ -> dispatch (WriteSurveyResultsRequest (model.RatingCollector.Value,model.AdditionalText,model.Task.Value,model.Pin)))
+                      (if model.Task.IsNone then Button.IsStatic true else Button.IsStatic false)]
                     [ str "Senden"]
                 ]
             ]
