@@ -17,14 +17,18 @@ open Fable.Remoting.Server
 open Fable.Remoting.Suave
 
 
-//let writeSurvey (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) =
-//    let infotxt =
-//        sprintf
-//            "%s\t%i\t%i\t%i\t%i\t|||%s|||\t"
-//            (string task) rating.Question1 rating.Question2 rating.Question3 rating.Question4 additionalTxt
-//    let txtName =
-//        sprintf "%s_%s_%s" pin (string task) (System.DateTime.Now.ToString())
-//    File.WriteAllText("","")
+let writeSurvey (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) =
+    if Array.contains pin Pins.pinList |> not then failwith "Pin not found in pinlist. Error 01."
+    let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
+    let infotxt =
+        sprintf
+            "%s\t%i\t%i\t%i\t%i\t|||%s|||\t"
+            (string task) rating.Question1 rating.Question2 rating.Question3 rating.Question4 additionalTxt
+    let txtName =
+        sprintf "SurveyResults/%s_%s_%s.txt" pin (string task) datetime
+    let baseDirectory = __SOURCE_DIRECTORY__
+    let fullPath = Path.Combine(baseDirectory, txtName)
+    File.WriteAllText(fullPath,infotxt)
     
 
 module ServerPath =

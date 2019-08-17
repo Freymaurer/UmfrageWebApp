@@ -17,15 +17,6 @@ open BoxAndSend
 open ModelMsgs
 
 
-let pinList = [|
-    "h2R4AVMZ"
-    "CqK5sA1P"
-    "0M6YRQJN"
-    "SPY53MDM"
-    "KLrY9IZ6"
-    "hallo"
-  |]
-
 module Server =
 
     open Shared
@@ -63,7 +54,7 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
         nextModel,Cmd.none
     | _, CheckPin (dispatch) ->
         let nextModel =
-            if Array.contains currentModel.Pin pinList
+            if Array.contains currentModel.Pin Pins.pinList
             then {currentModel with
                     Pageindex = 2}
             else {currentModel with

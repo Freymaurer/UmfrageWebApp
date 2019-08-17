@@ -32,3 +32,12 @@ type Tasks =
 | Excercise9
 | Excercise10
 
+module Pins =
+    let pinList = [|
+        "h2R4AVMZ"
+        "CqK5sA1P"
+        "0M6YRQJN"
+        "SPY53MDM"
+        "KLrY9IZ6"
+        "hallo"
+      |]
