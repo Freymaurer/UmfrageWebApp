@@ -110,7 +110,7 @@ let mainRatingModule (model:Model) (dispatch : Msg -> unit) =
             [ Column.column
                 [ Column.Width (Screen.All, Column.Is3)]
                 [ Dropdown.dropdown [ Dropdown.IsHoverable;
-                                      Dropdown.Props [ Style [ Width "100" ]
+                                      Dropdown.Props [ Style [ Width "100%" ]
                                                        Id "DropdownMenu"
                                                        OnMouseOver (fun _ -> let dropdownElement = document.getElementById "DropdownMenu"
                                                                              dropdownElement?style?border <- "1.5px solid #ff66b3"
@@ -122,11 +122,25 @@ let mainRatingModule (model:Model) (dispatch : Msg -> unit) =
                                       Dropdown.IsRight ]
                       [ div [ Style [ Width "100%" ] ]
                           [ Button.button [ Button.Props [ Style [ Width "100%" ] ] ] 
-                              [ span [ ]
-                                  [ str (if model.Task.IsNone then "Wählt die zu bewertende Aufgabe" else currentTask) ]
-                                Icon.icon [ Icon.Size IsSmall ]
-                                  [ Fa.i [ Fa.Solid.AngleDown ]
-                                      [ ] ] ] ]
+                              [ Columns.columns
+                                    [ Columns.Props [ Style [ Width "100%" ] ] ]
+                                    [ Column.column
+                                        [ Column.Width (Screen.All,Column.IsFourFifths) ]
+                                        [ span
+                                            [  ]
+                                            [ str (if model.Task.IsNone then "Wählt die zu bewertende Aufgabe" else currentTask) ]
+                                        ]
+                                      Column.column
+                                        [ Column.Modifiers [ Modifier.TextAlignment (Screen.All,TextAlignment.Right) ]
+                                          Column.Width (Screen.All,Column.IsOneFifth) ]
+                                        [Icon.icon [ Icon.Size IsSmall ]
+                                              [ Fa.i [ Fa.Solid.AngleDown ]
+                                                     [ ]
+                                              ]
+                                        ]
+                                    ]
+                              ]
+                          ]
                         Dropdown.menu [ ]
                           [ Dropdown.content [ ]
                               [ dropdownItemTask 1 Excercise1
