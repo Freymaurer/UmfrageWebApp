@@ -17,17 +17,16 @@ open BoxAndSend
 open ModelMsgs
 
 
-//module Server =
+module Server =
 
-//    open Shared
-//    open Fable.Remoting.Client
+    open Shared
+    open Fable.Remoting.Client
 
-//    /// A proxy you can use to talk to server directly
-//    let api : ICounterApi =
-//      Remoting.createApi()
-//      |> Remoting.withRouteBuilder Route.builder
-//      |> Remoting.buildProxy<ICounterApi>
-
+    /// A proxy you can use to talk to server directly
+    let apiSurvey : SurveyAPI =
+      Remoting.createApi()
+      |> Remoting.withRouteBuilder Route.builder
+      |> Remoting.buildProxy<SurveyAPI>
 
 
 // defines the initial state and initial command (= side-effect) of the application
@@ -47,6 +46,20 @@ let init () : Model * Cmd<Msg> =
 // these commands in turn, can dispatch messages to which the update function will react.
 let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     match currentModel, msg with
+
+    | _, WriteSurveyResultsRequest (rating,addTxt,task,pin) ->
+        let requestCmd =
+            Cmd.OfAsync.either
+                Server.apiSurvey.WriteSurveyResult
+                (rating,addTxt,task,pin)
+                (Ok >> WriteSurveyResultsResponse)
+                (Error >> WriteSurveyResultsResponse)
+        currentModel,requestCmd
+    | _, WriteSurveyResultsResponse (Ok value) ->
+        currentModel,Cmd.none
+    | _,WriteSurveyResultsResponse (Error e) ->
+        currentModel,Cmd.none
+
     | _, UpdatePin (input) ->
         let nextModel = {
             currentModel with
