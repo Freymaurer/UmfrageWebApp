@@ -51,11 +51,14 @@ let config =
           homeFolder = Some publicPath
           bindings = [ HttpBinding.create HTTP (IPAddress.Parse "0.0.0.0") port ] }
 
+let surveyApi = {
+    WriteSurveyResult = fun (ratings,addTxt,task,pin) -> async { return (writeSurvey ratings addTxt task pin) }
+}
 
 let webApi =
     Remoting.createApi()
     |> Remoting.withRouteBuilder Route.builder
-    //|> Remoting.fromValue counterApi
+    |> Remoting.fromValue surveyApi
     |> Remoting.buildWebPart
 let webApp =
     choose [
