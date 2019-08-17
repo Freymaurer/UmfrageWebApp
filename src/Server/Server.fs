@@ -51,14 +51,11 @@ let config =
           homeFolder = Some publicPath
           bindings = [ HttpBinding.create HTTP (IPAddress.Parse "0.0.0.0") port ] }
 
-let counterApi = {
-    initialCounter = fun () -> async { return {Value = 42} }
-}
 
 let webApi =
     Remoting.createApi()
     |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.fromValue counterApi
+    //|> Remoting.fromValue counterApi
     |> Remoting.buildWebPart
 let webApp =
     choose [

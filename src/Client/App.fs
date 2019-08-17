@@ -17,17 +17,18 @@ open BoxAndSend
 open ModelMsgs
 
 
-module Server =
+//module Server =
 
-    open Shared
-    open Fable.Remoting.Client
+//    open Shared
+//    open Fable.Remoting.Client
 
-    /// A proxy you can use to talk to server directly
-    let api : ICounterApi =
-      Remoting.createApi()
-      |> Remoting.withRouteBuilder Route.builder
-      |> Remoting.buildProxy<ICounterApi>
-let initialCounter = Server.api.initialCounter
+//    /// A proxy you can use to talk to server directly
+//    let api : ICounterApi =
+//      Remoting.createApi()
+//      |> Remoting.withRouteBuilder Route.builder
+//      |> Remoting.buildProxy<ICounterApi>
+
+
 
 // defines the initial state and initial command (= side-effect) of the application
 let init () : Model * Cmd<Msg> =

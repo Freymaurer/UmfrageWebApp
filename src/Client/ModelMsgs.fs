@@ -38,3 +38,6 @@ type Msg =
     | UpdatePageIndex of int
     | UpdateAdditionalText of string
     | UpdateTask of Tasks
+    | WriteSurveyResultsRequest of (Ratings*string*Tasks*string)
+    | WriteSurveyResultsResponse of Result<unit,exn>
+
