@@ -1,8 +1,3 @@
-open System.IO
-open System
-open System.Reflection
-open System.Net
-
 open Shared
 
 open Suave
@@ -15,29 +10,36 @@ open Suave.Logging
 open Fable.Remoting.Server
 open Fable.Remoting.Suave
 
+open System
+open System.IO
+open System.Reflection
+open System.Net
 
 let writeSurvey (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) =
     if Array.contains pin Pins.pinList |> not then failwith "Pin not found in pinlist. Error 01."
-    let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
+    //let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
     let txtName =
-       sprintf "SurveyResults\%s_%s_%s.txt" pin (string task) datetime //
+       sprintf @"SurveyResults\%s_%s.txt" pin (string task) (*datetime*) //_%s
     let baseDirectory = __SOURCE_DIRECTORY__
     let fullPath = Path.Combine(baseDirectory, txtName)
-    let fi = FileInfo (fullPath)
+    let directoryPath = Path.Combine (baseDirectory,@"SurveyResults\")
     let infotxt =
         sprintf
-            "%s\t%i\t%i\t%i\t%i\t|||%s|||\t"
+            "%s\t%i\t%i\t%i\t%i\t|||%s|||"
             (string task) rating.Question1 rating.Question2 rating.Question3 rating.Question4 additionalTxt
-    if not fi.Directory.Exists then
-        fi.Directory.Create()
-    File.WriteAllText(fi.FullName, infotxt)
+    let dirInfo = Directory.CreateDirectory(directoryPath)
+    //File.WriteAllText(fullPath, infotxt)
+    use streamWriter = new StreamWriter(fullPath)
+    streamWriter.WriteLine(infotxt)
+    "Yeay"
 
 let giveServerPath (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) =
-    let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
+    //let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
     let txtName =
-       sprintf "SurveyResults\%s_%s_%s.txt" pin (string task) datetime //
+       sprintf "SurveyResults\%s_%s.txt" pin (string task) (*datetime*) //_%s
     let baseDirectory = __SOURCE_DIRECTORY__
     let fullPath = Path.Combine(baseDirectory, txtName)
+    printfn "8"
     let infotxt =
         sprintf
             "%s\t%i\t%i\t%i\t%i\t|||%s|||\t"

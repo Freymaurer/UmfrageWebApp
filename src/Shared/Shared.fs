@@ -37,5 +37,5 @@ module Route =
 /// A type that specifies the communication protocol between client and server
 /// to learn more, read the docs at https://zaid-ajaj.github.io/Fable.Remoting/src/basics.html
 type SurveyAPI =
-    { WriteSurveyResult : (Ratings*string*Tasks*string) -> Async<unit>
-      GetServertime : (Ratings*string*Tasks*string) -> Async<string>}
+    { WriteSurveyResult : (Ratings*string*Tasks*string) -> Async<string>
+      GetServertime : (Ratings*string*Tasks*string) -> Async<string> }

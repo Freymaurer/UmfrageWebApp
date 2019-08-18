@@ -11,9 +11,6 @@ open Thoth.Json
 open Fable.Core.JsInterop
 
 open Shared
-open PinIn
-open Rating
-open BoxAndSend
 open ModelMsgs
 
 
@@ -34,11 +31,12 @@ let init () : Model * Cmd<Msg> =
     let initialModel = {
         Pin = ""
         Pageindex = 1
-        Modal = emptyModal
+        Modal = PinIn.emptyModal
         RatingCollector = Some {Question1 = 0; Question2 = 0; Question3 = 0; Question4 = 0}
         Task = None
         AdditionalText = ""
         Debug = ""
+        Result = None
         }
     initialModel, Cmd.none
 
@@ -59,7 +57,7 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     | _, GetServertimeResponse (Ok value) ->
         let nextModel = {
             currentModel with
-                Debug = string value
+                Debug = value
         }
         nextModel,Cmd.none
     | _,GetServertimeResponse (Error e) ->
@@ -80,13 +78,17 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     | _, WriteSurveyResultsResponse (Ok value) ->
         let nextModel = {
             currentModel with
-                Debug = string value
+                Debug = value
+                Result = Some true
+                Pageindex = 4
         }
         nextModel,Cmd.none
     | _,WriteSurveyResultsResponse (Error e) ->
         let nextModel = {
             currentModel with
                 Debug = e.Message
+                Result = Some false
+                Pageindex = 4
         }
         nextModel,Cmd.none
 
@@ -102,12 +104,12 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
             then {currentModel with
                     Pageindex = 2}
             else {currentModel with
-                    Modal = failModal CloseModal dispatch  }
+                    Modal = PinIn.failModal CloseModal dispatch  }
         nextModel,Cmd.none
     | _, CloseModal ->
         let nextModel = {
             currentModel with
-                Modal = emptyModal
+                Modal = PinIn.emptyModal
         }
         nextModel,Cmd.none
     | _, UpdateRatingCollector (inputRatings) ->
@@ -149,7 +151,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
         [ Hero.head [ Props [ Style [ Background "rgba(51, 153, 255, 0.15)"] ] ]
             [ Navbar.navbar [ ]
                 [ Container.container [ ]
-                    [ navBrand
+                    [ PinIn.navBrand
                     ]
                 ]
               br []
@@ -168,9 +170,10 @@ let view (model : Model) (dispatch : Msg -> unit) =
             [   Container.container [ Container.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
                     [
                         match model.Pageindex with
-                        | 1 -> yield mainPinInModule dispatch
-                        | 2 -> yield mainRatingModule model dispatch
-                        | 3 -> yield mainBoxAndSendModule model dispatch
+                        | 1 -> yield PinIn.mainPinInModule dispatch
+                        | 2 -> yield Rating.mainRatingModule model dispatch
+                        | 3 -> yield BoxAndSend.mainBoxAndSendModule model dispatch
+                        | 4 -> yield Result.mainResultsModule model
                         | _ -> yield str "Alright then, keep your secrets"
                     ]
             ]
@@ -179,11 +182,10 @@ let view (model : Model) (dispatch : Msg -> unit) =
             [ Text.p
                 [ Modifiers [ Modifier.TextColor IsGreyLighter;
                               Modifier.TextAlignment (Screen.All,TextAlignment.Centered) ] ]
-                [ safeComponents ]
+                [ PinIn.safeComponents ]
             ]
           //static page elements
           model.Modal
-          str model.Debug
         ]
 
 #if DEBUG

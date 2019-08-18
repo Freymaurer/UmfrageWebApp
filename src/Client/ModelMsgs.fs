@@ -24,6 +24,7 @@ type Model = {
     Task : Tasks option
     AdditionalText : string
     Debug : string
+    Result : bool option
     }
 
 // The Msg type defines what events/actions can occur while the application is running
@@ -37,7 +38,7 @@ type Msg =
     | UpdateAdditionalText of string
     | UpdateTask of Tasks
     | WriteSurveyResultsRequest of (Ratings*string*Tasks*string)
-    | WriteSurveyResultsResponse of Result<unit,exn>
+    | WriteSurveyResultsResponse of Result<string,exn>
     | GetServertimeRequest of (Ratings*string*Tasks*string)
     | GetServertimeResponse of Result<string,exn>
 

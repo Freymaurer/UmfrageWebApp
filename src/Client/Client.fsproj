@@ -14,6 +14,7 @@
         <Compile Include="PinIn.fs" />
         <Compile Include="Rating.fs" />
         <Compile Include="BoxAndSend.fs" />
+        <Compile Include="Result.fs" />
         <Compile Include="App.fs" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
