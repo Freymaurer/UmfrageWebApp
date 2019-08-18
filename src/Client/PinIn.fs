@@ -92,7 +92,7 @@ let containerBox (dispatch : Msg -> unit) =
     Box.box' [ Props [ onEnter (CheckPin dispatch) dispatch ] ]
         [ Field.div [ Field.IsGrouped ]
             [ Control.p [ Control.IsExpanded ]
-                [ Input.text
+                [ Input.password
                     [ Input.Placeholder "Pin"
                       Input.OnChange (fun e -> let x = !!e.target?value
                                                dispatch (UpdatePin x)

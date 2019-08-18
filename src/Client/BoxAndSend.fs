@@ -64,7 +64,7 @@ let mainBoxAndSendModule (model:Model) (dispatch : Msg -> unit) =
               Column.column
                 [ Column.Width (Screen.All,Column.IsOneQuarter) ]
                 [ Button.a
-                    [ Button.OnClick (fun _ -> dispatch (GetServertimeRequest (model.RatingCollector.Value,model.AdditionalText,model.Task.Value,model.Pin))) //WriteSurveyResultsRequest 
+                    [ Button.OnClick (fun _ -> dispatch (WriteSurveyResultsRequest (model.RatingCollector.Value,model.AdditionalText,model.Task.Value,model.Pin))) //WriteSurveyResultsRequest GetServertimeRequest
                       (if model.Task.IsNone then Button.IsStatic true else Button.IsStatic false)]
                     [ str "Senden"]
                 ]

@@ -19,20 +19,23 @@ open Fable.Remoting.Suave
 let writeSurvey (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) =
     if Array.contains pin Pins.pinList |> not then failwith "Pin not found in pinlist. Error 01."
     let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
+    let txtName =
+       sprintf "SurveyResults\%s_%s_%s.txt" pin (string task) datetime //
+    let baseDirectory = __SOURCE_DIRECTORY__
+    let fullPath = Path.Combine(baseDirectory, txtName)
+    let fi = FileInfo (fullPath)
     let infotxt =
         sprintf
             "%s\t%i\t%i\t%i\t%i\t|||%s|||\t"
             (string task) rating.Question1 rating.Question2 rating.Question3 rating.Question4 additionalTxt
-    let txtName =
-        sprintf "SurveyResults/%s_%s_%s.txt" pin (string task) datetime
-    let baseDirectory = __SOURCE_DIRECTORY__
-    let fullPath = Path.Combine(baseDirectory, txtName)
-    File.WriteAllText(fullPath,infotxt)
+    if not fi.Directory.Exists then
+        fi.Directory.Create()
+    File.WriteAllText(fi.FullName, infotxt)
 
 let giveServerPath (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) =
-    //let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
+    let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
     let txtName =
-       sprintf "SurveyResults\%s_%s.txt" pin (string task) (*datetime*) //_%s
+       sprintf "SurveyResults\%s_%s_%s.txt" pin (string task) datetime //
     let baseDirectory = __SOURCE_DIRECTORY__
     let fullPath = Path.Combine(baseDirectory, txtName)
     let infotxt =
@@ -40,7 +43,8 @@ let giveServerPath (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:str
             "%s\t%i\t%i\t%i\t%i\t|||%s|||\t"
             (string task) rating.Question1 rating.Question2 rating.Question3 rating.Question4 additionalTxt
     fullPath + infotxt
-    //File.WriteAllText(fullPath,"Test")
+    ////use streamWriter = new StreamWriter(fullPath,false)
+    ////streamWriter.WriteLine(infotxt)
 
 module ServerPath =
     let workingDirectory =
