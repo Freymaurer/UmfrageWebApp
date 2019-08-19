@@ -42,7 +42,8 @@ let timeRating strText (model:Model) dispatch  =
                     [ Input.number
                         [ Input.OnChange (fun e -> let x = !!e.target?value
                                                    dispatch (UpdateTimeRating (strText,x)) )
-                          Input.Value relatedTask ]
+                          Input.Value relatedTask
+                          Input.Placeholder "..Minuten"]
                     ]
                 ]
             ]
