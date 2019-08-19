@@ -63,7 +63,7 @@ let mainTimeRatingModule (model:Model) (dispatch : Msg -> unit) =
     let currentTask =
         if model.Task.IsSome
         then match model.Task.Value with | Excercise1 -> "Übung 1" | Excercise2 -> "Übung 2" | Excercise3 -> "Übung 3" | Excercise4 -> "Übung 4" | Excercise5 -> "Übung 5" | Excercise6 -> "Übung 6" | Excercise7 -> "Übung 7"
-                                         | Excercise8 -> "Übung 8" | Excercise9 -> "Übung 9" | Excercise10 -> "Übung 10" | _ -> "Wählt die zu bewertende Übung"
+                                         | Excercise8 -> "Übung 8" | Excercise9 -> "Übung 9" | Excercise10 -> "Übung 10" | _ -> "Missing"
         else ""
     let dropdownItemTask taskNr task=
         Dropdown.Item.a [ Dropdown.Item.Props [ OnClick (fun _ -> dispatch (UpdateTaskRequest task)) ] ]
@@ -126,7 +126,9 @@ let mainTimeRatingModule (model:Model) (dispatch : Msg -> unit) =
           Columns.columns
               [ Columns.IsCentered ]
               [ if model.Task = Some Loader
-                then yield str ".. loading"
+                then yield strong [ Style [Color "white"]] [str ".. loading"]
+                elif model.Task = Some FailedLoad
+                then yield Box.box' [] [strong [ ] [str "Zu der gewünschten Aufgabe gibt es noch keine Task Liste."]]
                 else yield Column.column
                             [ Column.Width (Screen.All, Column.IsThreeFifths)]
                             [ timeRatings model dispatch]

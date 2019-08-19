@@ -19,6 +19,7 @@ type Tasks =
 | Excercise9
 | Excercise10
 | Loader
+| FailedLoad
 
 module Pins =
 

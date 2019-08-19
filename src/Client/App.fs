@@ -120,6 +120,7 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
         let nextModel = {
             currentModel with
                 Debug = e.Message
+                Task = Some FailedLoad
         }
         nextModel,Cmd.none
 
@@ -248,7 +249,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
             ]
           //static page elements
           model.Modal
-          str model.Debug
+          //str model.Debug
         ]
 
 #if DEBUG
