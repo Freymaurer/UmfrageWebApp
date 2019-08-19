@@ -79,10 +79,10 @@ let question questionTxt qoi (model:Model) dispatch =
 let ratings model dispatch=
     form
         [ ]
-        [ question "Fandet Ihr die Aufgaben für den gewählten Task zu schwer?" 1 model dispatch
-          question "Hättet Ihr euch eine verstärkte Betreung gewünscht?" 2 model dispatch
-          question "Wurden Euch genügen Ressourcen genannt um die Aufgaben lösen zu können?" 3 model dispatch
-          question "Waren die Themen und Anwendungsmöglichkeiten gut erklärt?" 4 model dispatch ]
+        [ question "War die Vorlesung verständlich?" 1 model dispatch
+          question "Waren die Aufgabenstellungen der Tasks verständlich?" 2 model dispatch
+          question "Konntet ihr die Tasks mit Hilfe der Vorlesung lösen?" 3 model dispatch
+          question "Waren die Tasks zu schwer?" 4 model dispatch ]
 
 let checkForward (model:Model) =
     let ranged1To5 num = if num < 1 || num > 5 then false else true
@@ -96,61 +96,8 @@ let checkForward (model:Model) =
         else false
 
 let mainRatingModule (model:Model) (dispatch : Msg -> unit) =
-    let currentTask =
-        if model.Task.IsSome
-        then match model.Task.Value with | Excercise1 -> "Aufgabe 1" | Excercise2 -> "Aufgabe 2" | Excercise3 -> "Aufgabe 3" | Excercise4 -> "Aufgabe 4" | Excercise5 -> "Aufgabe 5" | Excercise6 -> "Aufgabe 6" | Excercise7 -> "Aufgabe 7"
-                                         | Excercise8 -> "Aufgabe 8" | Excercise9 -> "Aufgabe 9" | Excercise10 -> "Aufgabe 10" | _ -> "Wählt die zu bewertende Aufgabe"
-        else ""
-    let dropdownItemTask taskNr task=
-        Dropdown.Item.a [ Dropdown.Item.Props [ OnClick (fun _ -> dispatch (UpdateTask task)) ] ]
-            [ str (sprintf "Aufgabe %i" taskNr) ]
     div []
-        [ Columns.columns
-            [ Columns.IsCentered ]
-            [ Column.column
-                [ ]
-                [ Dropdown.dropdown [ Dropdown.IsHoverable;
-                                      Dropdown.Props [ Id "DropdownMenu"
-                                                       OnMouseOver (fun _ -> let dropdownElement = document.getElementById "DropdownMenu"
-                                                                             dropdownElement?style?border <- "1.5px solid #ff66b3"
-                                                                             dropdownElement?style?borderRadius <- "3px"
-                                                                   )
-                                                       OnMouseLeave (fun _ -> let dropdownElement = document.getElementById "DropdownMenu"
-                                                                              dropdownElement?style?border <- "1px solid grey"
-                                                                              dropdownElement?style?borderRadius <- "3px") ]
-                                      Dropdown.IsRight ]
-                      [ div [ Style [ Width "100%" ] ]
-                          [ Button.button [  ] 
-                              [ span
-                                    [  ]
-                                    [ str (if model.Task.IsNone then "Aufgabe" else currentTask) ]
-                                Icon.icon [ Icon.Size IsSmall ]
-                                          [ Fa.i [ Fa.Solid.AngleDown ]
-                                                 [ ]
-                                          ]
-                                       
-                              ]
-                              
-                          ]
-                        Dropdown.menu [ ]
-                          [ Dropdown.content [ ]
-                              [ dropdownItemTask 1 Excercise1
-                                dropdownItemTask 2 Excercise2
-                                dropdownItemTask 3 Excercise3
-                                dropdownItemTask 4 Excercise4
-                                dropdownItemTask 5 Excercise5
-                                Dropdown.divider []
-                                dropdownItemTask 6 Excercise6
-                                dropdownItemTask 7 Excercise7
-                                dropdownItemTask 8 Excercise8
-                                dropdownItemTask 9 Excercise9
-                                dropdownItemTask 10 Excercise10
-                              ]
-                          ]
-                      ]
-                ]
-            ]
-          br []
+        [ br []
           Columns.columns
               [ Columns.IsCentered ]
               [   Column.column
@@ -159,11 +106,18 @@ let mainRatingModule (model:Model) (dispatch : Msg -> unit) =
               ]
           br []
           Columns.columns
-              [ Columns.IsCentered ]
+              [ ]
               [ Column.column
-                  []
+                    [ Column.Offset (Screen.All,Column.IsOneQuarter)
+                      Column.Width (Screen.All,Column.IsOneQuarter) ]
+                    [ Button.a
+                        [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex (model.Pageindex - 1))) ]
+                        [ str "Zurück"]
+                    ]
+                Column.column
+                  [ Column.Width (Screen.All,Column.IsOneQuarter) ]
                   [ Button.a
-                      [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex 3))
+                      [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex (model.Pageindex + 1)))
                         (if checkForward model then Button.IsStatic false else Button.IsStatic true)]
                       [ str "Weiter"]
                   ]

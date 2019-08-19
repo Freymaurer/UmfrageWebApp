@@ -18,6 +18,7 @@ type Tasks =
 | Excercise8
 | Excercise9
 | Excercise10
+| Loader
 
 module Pins =
     let pinList = [|
@@ -29,6 +30,11 @@ module Pins =
         "hallo"
       |]
 
+type TaskInfo = {
+    Name : string
+    TimeNeeded : float option
+}
+
 module Route =
     /// Defines how routes are generated on server and mapped from client
     let builder typeName methodName =
@@ -37,5 +43,6 @@ module Route =
 /// A type that specifies the communication protocol between client and server
 /// to learn more, read the docs at https://zaid-ajaj.github.io/Fable.Remoting/src/basics.html
 type SurveyAPI =
-    { WriteSurveyResult : (Ratings*string*Tasks*string) -> Async<string>
-      GetServertime : (Ratings*string*Tasks*string) -> Async<string> }
+    { WriteSurveyResult : (Ratings*string*Tasks*string*TaskInfo []) -> Async<string>
+      GetServertime : (Ratings*string*Tasks*string) -> Async<string>
+      GetTaskScheme : (Tasks) -> Async<string []*Tasks>}

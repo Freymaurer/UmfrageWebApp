@@ -15,9 +15,22 @@ open System.IO
 open System.Reflection
 open System.Net
 
-let writeSurvey (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) =
+let getTaskArr (task:Tasks)=
+    let baseDirectory = __SOURCE_DIRECTORY__
+    let txtPath = @"TaskScheme\" + string task + ".txt"
+    let fullPath = Path.Combine(baseDirectory, txtPath)
+    File.ReadLines (fullPath)
+    |> String.concat ""
+    |> fun x -> x.Split ([|"\t"|],StringSplitOptions.RemoveEmptyEntries)
+    |> fun x -> x,task
+
+let writeSurvey (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string) (taskTimes:TaskInfo []) =
     if Array.contains pin Pins.pinList |> not then failwith "Pin not found in pinlist. Error 01."
-    //let datetime = (System.DateTime.Now.ToString()) |> fun x -> x.Replace (" ","_") |> fun x -> x.Replace (":","-")
+    if Array.exists (fun x -> x.TimeNeeded = None) taskTimes then failwith "Task without needed time given! Error 02"
+    let prepTaskTimes =
+        taskTimes
+        |> Array.map (fun x -> sprintf "%s = %.2f" x.Name x.TimeNeeded.Value )
+        |> String.concat "\t"
     let txtName =
        sprintf @"SurveyResults\%s_%s.txt" pin (string task) (*datetime*) //_%s
     let baseDirectory = __SOURCE_DIRECTORY__
@@ -25,10 +38,9 @@ let writeSurvey (rating:Ratings) (additionalTxt:string) (task:Tasks) (pin:string
     let directoryPath = Path.Combine (baseDirectory,@"SurveyResults\")
     let infotxt =
         sprintf
-            "%s\t%i\t%i\t%i\t%i\t|||%s|||"
-            (string task) rating.Question1 rating.Question2 rating.Question3 rating.Question4 additionalTxt
+            "%s\t%i\t%i\t%i\t%i\t|||%s|||\t%s"
+            (string task) rating.Question1 rating.Question2 rating.Question3 rating.Question4 additionalTxt prepTaskTimes
     let dirInfo = Directory.CreateDirectory(directoryPath)
-    //File.WriteAllText(fullPath, infotxt)
     use streamWriter = new StreamWriter(fullPath)
     streamWriter.WriteLine(infotxt)
     "Yeay"
@@ -82,8 +94,9 @@ let config =
           logger = logger }
 
 let surveyApi = {
-    WriteSurveyResult = fun (ratings,addTxt,task,pin) -> async { return (writeSurvey ratings addTxt task pin) }
+    WriteSurveyResult = fun (ratings,addTxt,task,pin,taskInfos) -> async { return (writeSurvey ratings addTxt task pin taskInfos) }
     GetServertime = fun (ratings,addTxt,task,pin) -> async { return giveServerPath ratings addTxt task pin }
+    GetTaskScheme = fun (task) -> async { return getTaskArr task }
 }
 
 let errorHandler (ex: Exception) (routeInfo: RouteInfo<HttpContext>) : ErrorResult = 

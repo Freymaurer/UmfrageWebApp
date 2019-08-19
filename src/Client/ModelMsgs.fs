@@ -25,6 +25,7 @@ type Model = {
     AdditionalText : string
     Debug : string
     Result : bool option
+    TaskArray : TaskInfo []
     }
 
 // The Msg type defines what events/actions can occur while the application is running
@@ -36,9 +37,12 @@ type Msg =
     | UpdateRatingCollector of Ratings
     | UpdatePageIndex of int
     | UpdateAdditionalText of string
-    | UpdateTask of Tasks
-    | WriteSurveyResultsRequest of (Ratings*string*Tasks*string)
+    | UpdateTaskRequest of Tasks
+    | UpdateTaskResponse of Result<string[]*Tasks,exn>
+    | WriteSurveyResultsRequest of (Ratings*string*Tasks*string*TaskInfo [])
     | WriteSurveyResultsResponse of Result<string,exn>
     | GetServertimeRequest of (Ratings*string*Tasks*string)
     | GetServertimeResponse of Result<string,exn>
+    | UpdateTimeRating of string*float
+    | UpdateModel of Model
 

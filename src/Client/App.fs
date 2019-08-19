@@ -37,8 +37,11 @@ let init () : Model * Cmd<Msg> =
         AdditionalText = ""
         Debug = ""
         Result = None
+        TaskArray = [||]
         }
     initialModel, Cmd.none
+
+
 
 // The update function computes the next state of the application based on the current state and the incoming events/messages
 // It can also run side-effects (encoded as commands) like calling the server via Http.
@@ -67,11 +70,11 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
         }
         nextModel,Cmd.none
 
-    | _, WriteSurveyResultsRequest (rating,addTxt,task,pin) ->
+    | _, WriteSurveyResultsRequest (rating,addTxt,task,pin,taskInfos) ->
         let requestCmd =
             Cmd.OfAsync.either
                 Server.apiSurvey.WriteSurveyResult
-                (rating,addTxt,task,pin)
+                (rating,addTxt,task,pin,taskInfos)
                 (Ok >> WriteSurveyResultsResponse)
                 (Error >> WriteSurveyResultsResponse)
         currentModel,requestCmd
@@ -80,7 +83,7 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
             currentModel with
                 Debug = value
                 Result = Some true
-                Pageindex = 4
+                Pageindex = 5
         }
         nextModel,Cmd.none
     | _,WriteSurveyResultsResponse (Error e) ->
@@ -88,7 +91,35 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
             currentModel with
                 Debug = e.Message
                 Result = Some false
-                Pageindex = 4
+                Pageindex = 5
+        }
+        nextModel,Cmd.none
+
+    | _, UpdateTaskRequest (inputTask) ->
+        let nextModel = {
+            currentModel with
+                Task = Some Loader
+        }
+        let requestCmd =
+            Cmd.OfAsync.either
+                Server.apiSurvey.GetTaskScheme
+                (inputTask)
+                (Ok >> UpdateTaskResponse)
+                (Error >> UpdateTaskResponse)
+        nextModel,requestCmd
+    | _, UpdateTaskResponse (Ok (value,task)) ->
+        let taskArr = value |> Array.map (fun x -> {Name = x; TimeNeeded = None})
+        let nextModel = {
+            currentModel with
+                Task = Some task
+                TaskArray = taskArr
+                Debug = "Taks successful"
+        }
+        nextModel,Cmd.none
+    | _, UpdateTaskResponse (Error e) ->
+        let nextModel = {
+            currentModel with
+                Debug = e.Message
         }
         nextModel,Cmd.none
 
@@ -130,10 +161,20 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
                 AdditionalText = inputStr
         }
         nextModel,Cmd.none
-    | _, UpdateTask (inputTask) ->
+    | _, UpdateModel (inputModel) ->
+        inputModel,Cmd.none
+    | _, UpdateTimeRating (name,timeDur) ->
+        let currentTaskInd =
+            currentModel.TaskArray
+            |> Array.find (fun x -> x.Name = name)
+            |> fun y -> Array.findIndex (fun x -> x = y) currentModel.TaskArray
+        let mutableTaskArr = currentModel.TaskArray
+
+        mutableTaskArr.[currentTaskInd] <- {Name = name; TimeNeeded = Some timeDur}
+
         let nextModel = {
             currentModel with
-                Task = Some inputTask
+                TaskArray = mutableTaskArr
         }
         nextModel,Cmd.none
     | _ -> currentModel, Cmd.none
@@ -163,7 +204,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
                            Heading.IsSubtitle
                            Heading.Modifiers [ Modifier.TextAlignment (Screen.All,TextAlignment.Centered) ]
                          ]
-                         [ str "Programmieren für Biologen" ]
+                         [ str "Wissenschaftliches Programmieren für Biologen" ]
             ]
 
           Hero.body [ Props [ Style [ Props.Display DisplayOptions.Block ] ] ]
@@ -171,9 +212,10 @@ let view (model : Model) (dispatch : Msg -> unit) =
                     [
                         match model.Pageindex with
                         | 1 -> yield PinIn.mainPinInModule dispatch
-                        | 2 -> yield Rating.mainRatingModule model dispatch
-                        | 3 -> yield BoxAndSend.mainBoxAndSendModule model dispatch
-                        | 4 -> yield Result.mainResultsModule model
+                        | 2 -> yield TimeRating.mainTimeRatingModule model dispatch
+                        | 3 -> yield Rating.mainRatingModule model dispatch
+                        | 4 -> yield BoxAndSend.mainBoxAndSendModule model dispatch
+                        | 5 -> yield Result.mainResultsModule model dispatch
                         | _ -> yield str "Alright then, keep your secrets"
                     ]
             ]
@@ -186,6 +228,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
             ]
           //static page elements
           model.Modal
+          str model.Debug
         ]
 
 #if DEBUG

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -13,6 +13,7 @@
         <Compile Include="ModelMsgs.fs" />
         <Compile Include="PinIn.fs" />
         <Compile Include="Rating.fs" />
+        <Compile Include="TimeRating.fs" />
         <Compile Include="BoxAndSend.fs" />
         <Compile Include="Result.fs" />
         <Compile Include="App.fs" />

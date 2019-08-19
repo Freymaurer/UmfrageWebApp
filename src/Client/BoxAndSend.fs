@@ -58,13 +58,13 @@ let mainBoxAndSendModule (model:Model) (dispatch : Msg -> unit) =
                 [ Column.Offset (Screen.All,Column.IsOneQuarter)
                   Column.Width (Screen.All,Column.IsOneQuarter) ]
                 [ Button.a
-                    [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex 2)) ]
+                    [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex (model.Pageindex - 1))) ]
                     [ str "Zurück"]
                 ]
               Column.column
                 [ Column.Width (Screen.All,Column.IsOneQuarter) ]
                 [ Button.a
-                    [ Button.OnClick (fun _ -> dispatch (WriteSurveyResultsRequest (model.RatingCollector.Value,model.AdditionalText,model.Task.Value,model.Pin))) //WriteSurveyResultsRequest GetServertimeRequest
+                    [ Button.OnClick (fun _ -> dispatch (WriteSurveyResultsRequest (model.RatingCollector.Value,model.AdditionalText,model.Task.Value,model.Pin,model.TaskArray))) //WriteSurveyResultsRequest GetServertimeRequest
                       (if model.Task.IsNone then Button.IsStatic true else Button.IsStatic false)]
                     [ str "Senden"]
                 ]
