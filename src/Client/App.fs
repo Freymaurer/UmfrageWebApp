@@ -9,10 +9,10 @@ open Fable.React.Props
 open Fulma
 open Thoth.Json
 open Fable.Core.JsInterop
+open Browser
 
 open Shared
 open ModelMsgs
-
 
 module Server =
 
@@ -179,6 +179,26 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
         nextModel,Cmd.none
     | _ -> currentModel, Cmd.none
 
+let navBrand =
+    Navbar.Brand.div
+        [ Props [ Style [ BackgroundColor "rgba(51, 153, 255, 0.0)" ]
+                  Id "safeLogo"
+                  OnMouseOver (fun _ -> let safeLogo = document.getElementById "safeLogo"
+                                        safeLogo?style?backgroundColor <- "rgba(153, 204, 255, 0.3)"
+                               )
+                  OnMouseLeave (fun _ -> let safeLogo = document.getElementById "safeLogo"
+                                         safeLogo?style?backgroundColor <- "rgba(51, 153, 255, 0.0)"
+                               )
+                ]
+        ]
+        [ img [ Href "https://safe-stack.github.io/"
+                HTMLAttr.Target "_blank"
+                Src "/csblogo.png"
+                Alt "Logo"
+                Style [ Height "100%"
+                        BorderRadius "3px"] ]
+        ]
+
 let view (model : Model) (dispatch : Msg -> unit) =
     Hero.hero [ Hero.IsFullHeight;
                 Hero.Props [ Style [ BackgroundImage "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(\"https://i.imgsafe.org/ba/baa924a5e3.png\")"
@@ -190,11 +210,8 @@ let view (model : Model) (dispatch : Msg -> unit) =
                            ]
                 ]
         [ Hero.head [ Props [ Style [ Background "rgba(51, 153, 255, 0.15)"] ] ]
-            [ Navbar.navbar [ ]
-                [ Container.container [ ]
-                    [ PinIn.navBrand
-                    ]
-                ]
+            [ Navbar.navbar [ Navbar.Props [ Style [ Height "5rem"; Position PositionOptions.Absolute ] ] ]
+                [ navBrand ]
               br []
               br []
               Heading.h1 [ Heading.Props [ Style [Color "#d9d9d9"] ]

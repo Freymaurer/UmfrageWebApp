@@ -9,7 +9,7 @@ open Fable.React.Props
 open Fulma
 open Thoth.Json
 open Fable.Core.JsInterop
-open Browser
+
 
 open Shared
 open ModelMsgs
@@ -70,23 +70,6 @@ let safeComponents =
           strong [ Style [Color "#d9d9d9"] ] [ str Version.app ]
           str " powered by: "
           components ]
-
-let navBrand =
-    Navbar.Brand.div [ Props [ Style [ BackgroundColor "rgba(51, 153, 255, 0.4)" ]
-                               Id "safeLogo"
-                               OnMouseOver (fun _ -> let safeLogo = document.getElementById "safeLogo"
-                                                     safeLogo?style?backgroundColor <- "rgba(153, 204, 255, 0.3)"
-                                            )
-                               OnMouseLeave (fun _ -> let safeLogo = document.getElementById "safeLogo"
-                                                      safeLogo?style?backgroundColor <- "rgba(51, 153, 255, 0.4)"
-                                            )
-                                ]
-                     ]
-        [ Navbar.Item.a
-            [ Navbar.Item.Props [ Href "https://safe-stack.github.io/" ]
-              Navbar.Item.IsActive true ]
-            [ img [ Src "https://safe-stack.github.io/images/safe_top.png"
-                    Alt "Logo" ] ] ]
 
 let containerBox (dispatch : Msg -> unit) =
     Box.box' [ Props [ onEnter (CheckPin dispatch) dispatch ] ]
