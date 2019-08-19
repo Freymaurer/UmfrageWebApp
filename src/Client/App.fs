@@ -205,8 +205,9 @@ let navBrand =
         [ a [ Href "https://csb.bio.uni-kl.de/"; HTMLAttr.Target "_blank"; Style [Color "#ff80b3"] ] 
             [ img [ Src "/csblogo.png"
                     Alt "Logo"
-                    Style [ Height "100%"
-                            BorderRadius "3px"] ]
+                    Style [ Height "5rem"
+                            BorderRadius "3px" ]
+                  ]
             ]
         ]
 
