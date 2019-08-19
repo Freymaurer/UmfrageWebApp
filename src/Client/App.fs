@@ -189,14 +189,17 @@ let navBrand =
                   OnMouseLeave (fun _ -> let safeLogo = document.getElementById "safeLogo"
                                          safeLogo?style?backgroundColor <- "rgba(51, 153, 255, 0.0)"
                                )
+
+                  
                 ]
-        ]
-        [ img [ Href "https://safe-stack.github.io/"
-                HTMLAttr.Target "_blank"
-                Src "/csblogo.png"
-                Alt "Logo"
-                Style [ Height "100%"
-                        BorderRadius "3px"] ]
+        ]//not necessary anymore :(
+        //[ ]
+        [ a [ Href "https://csb.bio.uni-kl.de/"; HTMLAttr.Target "_blank"; Style [Color "#ff80b3"] ] 
+            [ img [ Src "/csblogo.png"
+                    Alt "Logo"
+                    Style [ Height "100%"
+                            BorderRadius "3px"] ]
+            ]
         ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
