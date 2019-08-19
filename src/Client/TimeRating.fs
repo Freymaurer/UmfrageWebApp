@@ -135,15 +135,8 @@ let mainTimeRatingModule (model:Model) (dispatch : Msg -> unit) =
               ]
           br []
           Columns.columns
-              [ ]
+              [ Columns.IsCentered ]
               [ Column.column
-                    [ Column.Offset (Screen.All,Column.IsOneQuarter)
-                      Column.Width (Screen.All,Column.IsOneQuarter) ]
-                    [ Button.a
-                        [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex (model.Pageindex - 1))) ]
-                        [ str "Zurück"]
-                    ]
-                Column.column
                   [ Column.Width (Screen.All,Column.IsOneQuarter) ]
                   [ Button.a
                       [ Button.OnClick (fun _ -> dispatch (UpdatePageIndex (model.Pageindex + 1)))

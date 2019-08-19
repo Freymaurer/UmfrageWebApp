@@ -111,14 +111,21 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
         let taskArr = value |> Array.map (fun x -> {Name = x; TimeNeeded = None})
         let nextModel = {
             currentModel with
-                Task = Some task
+                RatingCollector = Some {Question1 = 0; Question2 = 0; Question3 = 0; Question4 = 0}
+                AdditionalText = ""
+                Result = None
                 TaskArray = taskArr
+                Task = Some task
                 Debug = "Taks successful"
         }
         nextModel,Cmd.none
     | _, UpdateTaskResponse (Error e) ->
         let nextModel = {
             currentModel with
+                RatingCollector = Some {Question1 = 0; Question2 = 0; Question3 = 0; Question4 = 0}
+                AdditionalText = ""
+                Result = None
+                TaskArray = [||]
                 Debug = e.Message
                 Task = Some FailedLoad
         }
